@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Farkle Scoreboard</title>
+    <style>
+        /* Add your custom CSS styles here */
+    </style>
+</head>
+<body>
+    <h1>Farkle Scoreboard</h1>
+
+    <div>
+        <label for="players">Number of Players:</label>
+        <select id="players">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <!-- Add more options as needed -->
+        </select>
+    </div>
+
+    <div id="scoreInputs">
+        <!-- Score input fields will be dynamically generated here -->
+    </div>
+
+    <div id="gameInfo">
+        <h2>Game Information</h2>
+        <p>Rules: <!-- Add the rules of the game --></p>
+        <p>Round Average: <span id="roundAverage">0</span></p>
+        <p>Round Count: <span id="roundCount">0</span></p>
+        <p>Number of Farkles: <span id="farkleCount">0</span></p>
+    </div>
+
+    <div id="scoreStatus">
+        <!-- Score status will be dynamically generated here -->
+    </div>
+
+    <div>
+        <button id="saveButton">Save Game</button>
+    </div>
+
+    <script>
+        // JavaScript code here
+
+        // Get the number of players selected
+        var playerCount = document.getElementById("players").value;
+
+        // Dynamically generate score input fields based on the number of players
+        var scoreInputs = document.getElementById("scoreInputs");
+        for (var i = 1; i <= playerCount; i++) {
+            var inputField = document.createElement("input");
+            inputField.type = "number";
+            inputField.id = "player" + i + "Score";
+            inputField.placeholder = "Player " + i + " Score";
+            scoreInputs.appendChild(inputField);
+        }
+
+        // Calculate and display score status
+        function calculateScoreStatus() {
+            var scores = [];
+            for (var i = 1; i <= playerCount; i++) {
+                var score = document.getElementById("player" + i + "Score").value;
+                scores.push(score);
+            }
+
+            var totalScores = scores.reduce((a, b) => parseInt(a) + parseInt(b), 0);
+            var average = totalScores / playerCount;
+
+            document.getElementById("roundAverage").textContent = average.toFixed(2);
+            document.getElementById("roundCount").textContent = scores.length;
+            document.getElementById("farkleCount").textContent = countFarkles(scores);
+
+            var statusText = "";
+            for (var i = 0; i < scores.length; i++) {
+                var difference = 10000 - scores[i];
+                var distanceToOthers = calculateDistanceToOthers(scores, i);
+                statusText += "Player " + (i + 1) + ": " + difference + " points from 10,000, " + distanceToOthers + " points from others<br>";
+            }
+            document.getElementById("scoreStatus").innerHTML = statusText;
+        }
+
+        // Count the number of Farkles
+        function countFarkles(scores) {
+            var farkleCount = 0;
+            for (var i = 0; i < scores.length; i++) {
+                if (scores[i]
